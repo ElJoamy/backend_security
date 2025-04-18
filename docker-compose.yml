@@ -1,0 +1,35 @@
+services:
+  # Servicio del backend
+  power_backend:
+    build:
+      context: . # Ruta al directorio donde se encuentra el Dockerfile
+      dockerfile: Dockerfile.backend_security # Nombre del Dockerfile
+    container_name: backend_security_app
+    ports:
+      - "51002:51002" # Mapea el puerto 8000 del contenedor al puerto 8000 local
+    environment:
+      SERVICE_NAME: ${SERVICE_NAME}
+      K_REVISION: ${K_REVISION}
+      LOG_LEVEL: ${LOG_LEVEL}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
+#     # networks:
+#     #   sorteador:
+#     #     ipv4_address: ${HOST_BACKEND} # Utiliza la variable de entorno para definir la IP del contenedor app
+
+# # Definición de redes personalizadas
+# networks:
+#   sorteador:
+#     # driver: ${NETWORK_DRIVER}  # Utiliza la variable de entorno NETWORK_DRIVER
+#     # driver_opts:
+#     #   parent: ${PARENT}  # Utiliza la variable de entorno PARENT
+#     ipam:
+#       config:
+#         - subnet: ${SUBNET}  # Utiliza la variable de entorno SUBNET
+#           gateway: ${GATEWAY}  # Utiliza la variable de entorno GATEWAY
