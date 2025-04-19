@@ -25,7 +25,8 @@ profile_service = ProfileService()
 @router.get(
     "/profile",
     response_model=UserProfileResponse,
-    responses=get_profile_example
+    responses=get_profile_example,
+    description="Returns user profile information",
 )
 async def get_profile(current_user: User = Depends(get_current_user)):
     logger.info(f"👤 Profile fetch requested by user ID {current_user.id}")
@@ -35,7 +36,8 @@ async def get_profile(current_user: User = Depends(get_current_user)):
 @router.put(
     "/profile",
     response_model=UserProfileResponse,
-    responses=update_profile_example
+    responses=update_profile_example,
+    description="Updates user profile information",
 )
 async def update_profile(
     update_data: UpdateProfileRequest = Depends(),

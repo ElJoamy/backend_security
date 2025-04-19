@@ -1,6 +1,7 @@
 import logging
 import coloredlogs
 import os
+import sys
 
 def setup_logger(name, level=logging.INFO, log_file='app.log'):
     """
@@ -26,7 +27,11 @@ def setup_logger(name, level=logging.INFO, log_file='app.log'):
     file_handler.setFormatter(file_formatter)
 
     # Create a console handler
-    console_handler = logging.StreamHandler()
+    console_handler = logging.StreamHandler(sys.stdout)
+    try:
+        console_handler.stream.reconfigure(encoding="utf-8")
+    except AttributeError:
+        pass
     console_handler.setLevel(level)
     console_formatter = coloredlogs.ColoredFormatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     console_handler.setFormatter(console_formatter)

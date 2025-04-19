@@ -5,7 +5,6 @@ from src.utils.logger import setup_logger
 
 logger = setup_logger(__name__, level=logging.DEBUG)
 
-
 class Settings(BaseSettings):
     service_name: str = "Backend with security"
     k_revision: str = "local"
