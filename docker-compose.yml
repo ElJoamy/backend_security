@@ -2,11 +2,11 @@ services:
   # Servicio del backend
   power_backend:
     build:
-      context: . # Ruta al directorio donde se encuentra el Dockerfile
-      dockerfile: Dockerfile.backend_security # Nombre del Dockerfile
+      context: .
+      dockerfile: Dockerfile.backend_security 
     container_name: backend_security_app
     ports:
-      - "51002:51002" # Mapea el puerto 8000 del contenedor al puerto 8000 local
+      - "51002:51002"
     environment:
       SERVICE_NAME: ${SERVICE_NAME}
       K_REVISION: ${K_REVISION}
@@ -19,6 +19,15 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
+      JWT_COOKIE_NAME: ${JWT_COOKIE_NAME}
+      JWT_REFRESH_COOKIE_NAME: ${JWT_REFRESH_COOKIE_NAME}
+      JWT_COOKIE_SECURE: ${JWT_COOKIE_SECURE}
+      JWT_COOKIE_SAMESITE: ${JWT_COOKIE_SAMESITE}
+      CSRF_COOKIE_NAME: ${CSRF_COOKIE_NAME}
+      CSRF_HEADER_NAME: ${CSRF_HEADER_NAME}
+      CSRF_SAFE_METHODS: ${CSRF_SAFE_METHODS}
+      CSRF_COOKIE_EXPIRE_MINUTES: ${CSRF_COOKIE_EXPIRE_MINUTES}
+
 #     # networks:
 #     #   sorteador:
 #     #     ipv4_address: ${HOST_BACKEND} # Utiliza la variable de entorno para definir la IP del contenedor app
