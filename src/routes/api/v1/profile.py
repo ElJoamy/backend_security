@@ -8,6 +8,7 @@ from src.models.user_model import User
 from src.services.profile_service import ProfileService
 from src.schema.requests.update_profile_request import UpdateProfileRequest
 from src.schema.responses.user_profile_response import UserProfileResponse
+from src.dependencies.profile_dependencies import get_update_profile_data
 from src.schema.examples.profile_response_example import get_profile_example
 from src.schema.examples.update_profile_example import update_profile_example
 from src.utils.logger import setup_logger
@@ -40,7 +41,7 @@ async def get_profile(current_user: User = Depends(get_current_user)):
     description="Updates user profile information",
 )
 async def update_profile(
-    update_data: UpdateProfileRequest = Depends(),
+    update_data: UpdateProfileRequest = Depends(get_update_profile_data),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):

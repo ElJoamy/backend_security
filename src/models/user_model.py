@@ -13,7 +13,11 @@ class User(Base):
     __tablename__ = 'user'
     __table_args__ = (
         Index('country_code', 'country_code', 'phone_number', unique=True),
-        Index('email', 'email', unique=True)
+        Index('email', 'email', unique=True),
+        {
+            "mysql_charset": "utf8mb4",
+            "mysql_collate": "utf8mb4_unicode_ci"
+        }
     )
 
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True)

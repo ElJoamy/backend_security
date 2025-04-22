@@ -2,6 +2,7 @@ from . import login
 from . import register
 from . import profile
 from. import logout
+from . import token_refresh
 from fastapi import APIRouter
 import sys
 import os
@@ -13,5 +14,7 @@ router = APIRouter()
 router.include_router(register.router, tags=["Auth"])
 router.include_router(login.router, tags=["Auth"])
 router.include_router(logout.router, tags=["Auth"])
+router.include_router(token_refresh.router, tags=["Auth"])
 router.include_router(profile.router, tags=["User"])
+
 

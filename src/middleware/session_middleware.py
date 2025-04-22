@@ -1,7 +1,7 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
-from src.security.jwt_handler import decode_access_token  # ✅ actualizado
+from src.security.jwt_handler import decode_token
 from src.config.db_config import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -18,7 +18,7 @@ class SessionMiddleware(BaseHTTPMiddleware):
         request.state.user = None
 
         if token:
-            payload = decode_access_token(token)
+            payload = decode_token(token)
             if payload:
                 user_id = payload.get("sub")
                 try:

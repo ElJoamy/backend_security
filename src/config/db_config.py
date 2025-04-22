@@ -20,6 +20,7 @@ if _SETTINGS:
     SQLALCHEMY_DATABASE_URL = (
         f"mysql+aiomysql://{_SETTINGS.db_user}:{_SETTINGS.db_password}"
         f"@{_SETTINGS.db_host}:{_SETTINGS.db_port}/{_SETTINGS.db_name}"
+        f"?charset=utf8mb4"
     )
 
     # Validación de variables

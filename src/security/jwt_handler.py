@@ -1,19 +1,22 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
+import uuid
 from src.config.config import get_settings
 from src.utils.logger import setup_logger
 
 _SETTINGS = get_settings()
 logger = setup_logger(__name__, level=_SETTINGS.log_level)
 
-def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
-    """
-    Crea un JWT con los datos y expiración definida
-    """
+def _build_token(data: dict, expires_delta: timedelta) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=_SETTINGS.jwt_expiration_minutes))
-    to_encode.update({"exp": expire})
-    
+    now = datetime.now(timezone.utc)
+    expire = now + expires_delta
+    to_encode.update({
+        "exp": expire,
+        "iat": now,
+        "jti": str(uuid.uuid4())  # Token ID único
+    })
+
     try:
         encoded_jwt = jwt.encode(to_encode, _SETTINGS.jwt_secret, algorithm=_SETTINGS.jwt_algorithm)
         logger.debug("✅ JWT generado correctamente")
@@ -22,12 +25,25 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
         logger.error(f"❌ Error generando JWT: {e}")
         raise
 
-def decode_access_token(token: str) -> dict | None:
-    """
-    Decodifica y verifica un JWT. Si es válido, devuelve su payload. Si no, devuelve None.
-    """
+def create_access_token(data: dict) -> str:
+    return _build_token(
+        data,
+        timedelta(minutes=_SETTINGS.jwt_expiration_minutes)
+    )
+
+def create_refresh_token(data: dict) -> str:
+    return _build_token(
+        data,
+        timedelta(minutes=_SETTINGS.jwt_refresh_expiration_minutes)
+    )
+
+def decode_token(token: str) -> dict | None:
     try:
-        payload = jwt.decode(token, _SETTINGS.jwt_secret, algorithms=[_SETTINGS.jwt_algorithm])
+        payload = jwt.decode(
+            token,
+            _SETTINGS.jwt_secret,
+            algorithms=[_SETTINGS.jwt_algorithm]
+        )
         logger.debug("🔓 JWT decodificado exitosamente")
         return payload
     except JWTError as e:

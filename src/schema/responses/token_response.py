@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
+    message: str
+    jti: str  # ID único del access_token

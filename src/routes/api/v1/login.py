@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, status, Response
+from fastapi import APIRouter, Depends, status, Response, Request, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.config.db_config import get_db
 from src.services.login_service import LoginService
 from src.schema.requests.login_request import LoginRequest
 from src.schema.responses.token_response import TokenResponse
+from src.security.jwt_handler import decode_token
 from src.utils.logger import setup_logger
 from src.config.config import get_settings
-from fastapi import APIRouter, Security
-from fastapi.security import OAuth2PasswordBearer
 
 _SETTINGS = get_settings()
 logger = setup_logger(__name__, level=_SETTINGS.log_level)
@@ -19,25 +18,21 @@ login_service = LoginService()
     "/login",
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
-    description="Authenticate user and return a JWT access token"
+    description="Authenticate user and set tokens in secure HttpOnly cookies"
 )
 async def login_user(
-    request: LoginRequest,
+    request: Request,
+    body: LoginRequest,
     response: Response,
     db: AsyncSession = Depends(get_db)
 ):
-    logger.debug(f"🛎️ Received login request for {request.email}")
+    # 🔒 Verificar si ya está logueado por cookie
+    existing_token = request.cookies.get(_SETTINGS.jwt_cookie_name)
+    if existing_token:
+        decoded = decode_token(existing_token)
+        if decoded:
+            logger.info(f"🔁 Login rejected — already authenticated (user_id={decoded.get('sub')})")
+            raise HTTPException(status_code=400, detail="You are already logged in.")
 
-    token_data = await login_service.login_user(db, request)
-
-    # Guardar el token como cookie HttpOnly (opcional)
-    response.set_cookie(
-        key="access_token",
-        value=token_data.access_token,
-        httponly=True,
-        secure=False,  # True en producción con HTTPS
-        samesite="lax",
-        max_age=60 * 60 * 24  # 1 día
-    )
-
-    return token_data
+    logger.debug(f"🛎️ Received login request for {body.email}")
+    return await login_service.login_user(db, body, response)

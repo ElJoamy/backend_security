@@ -66,8 +66,12 @@ class ProfileService:
             user.password = hash_password(data.password)
 
         if data.profile_photo:
-            user.profile_photo = validate_profile_photo(data.profile_photo)
+            data.profile_photo.file.seek(0)  # 🔁 asegura que está en posición inicial
+            validated = validate_profile_photo(data.profile_photo)
+            user.profile_photo = validated
+            logger.debug(f"📸 Foto subida — tamaño: {len(validated)} bytes")
 
+        # Actualizar el usuario en la base de datos
         db.add(user)
         await db.commit()
         await db.refresh(user)

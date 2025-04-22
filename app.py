@@ -2,6 +2,7 @@ import logging
 from fastapi import FastAPI
 from src.middleware.error_handler import global_exception_handler
 from src.middleware.session_middleware import SessionMiddleware
+from src.middleware.csrf_middleware import CSRFMiddleware
 from src.config.config import get_settings
 from src.config.cors_config import add_cors
 from src.routes.api.v1 import router as v1_router
@@ -30,6 +31,7 @@ app = FastAPI(
 
 add_cors(app)
 app.add_middleware(SessionMiddleware)
+app.add_middleware(CSRFMiddleware)
 app.add_exception_handler(Exception, global_exception_handler)
 
 # Include the routes with versioning
