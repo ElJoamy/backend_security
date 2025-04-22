@@ -7,6 +7,8 @@ Este es un backend moderno y seguro construido con FastAPI, que implementa auten
 ## 🧱 Estructura del Proyecto
 
 ```
+db/
+├── init.sql             # Script de inicialización de la base de datos
 src/
 ├── config/              # Configuración general y carga del .env
 ├── middleware/          # Middlewares globales (errores, CSRF, sesiones)
